@@ -24,7 +24,7 @@ const createRouter = () => {
             name,
             id
         }
-            // uid + ',' + name
+        // uid + ',' + name
 
         users.push(user);
         res.send(user);
@@ -34,12 +34,18 @@ const createRouter = () => {
     router.get('/:uid', (req, res) => {
         // res.send({ users })
         const user = users.find((user) => user.id == req.params.uid)
-        if(user){
+        if (user) {
             res.send(user);
 
-        }else{
-            res.status(404).send({error:'not found'})
+        } else {
+            res.status(404).send({ error: 'not found' })
         }
+    });
+
+    router.post('/login', (req, res) => {
+        let username = req.body.username;
+        let password = req.body.password;
+        res.send(`Username: ${username} Password: ${password}`);
     });
 
     //create a user
