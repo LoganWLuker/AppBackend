@@ -43,7 +43,7 @@ describe('comments router', () => {
 })
 
 // example test suite
-describe('users logging in', () => {
+describe('login', () => {
 
     it('it accepts correct passwords', async () => {
         console.log('correct')
