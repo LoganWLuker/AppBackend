@@ -2,7 +2,7 @@ const request = require('supertest');
 const express = require('express');
 var bodyParser = require('body-parser')
 
-const { createRouter } = require('./users')
+const { createRouter } = require('../src/users')
 
 let app, router
 beforeEach(() => {

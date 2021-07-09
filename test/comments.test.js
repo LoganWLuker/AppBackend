@@ -2,7 +2,7 @@ const request = require('supertest');
 const express = require('express');
 var bodyParser = require('body-parser')
 
-const { createRouter } = require('./comments')
+const { createRouter } = require('../src/comments')
 
 let app, router
 beforeEach(() => {
