@@ -43,13 +43,13 @@ describe('comments router', () => {
 })
 
 // example test suite
-describe('login', () => {
+// describe('login', () => {
 
-    it('it accepts correct passwords', async () => {
-        console.log('correct')
-    })
+//     it('it accepts correct passwords', async () => {
+//         console.log('correct')
+//     })
 
-    it('reject bad passwords', async () => {
-        console.log('wrong')
-    })
-})
+//     it('reject bad passwords', async () => {
+//         console.log('wrong')
+//     })
+// })
