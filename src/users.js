@@ -12,6 +12,8 @@ and returns all users */
 
 const UUID = require('uuid').v4;
 const express = require('express');
+const bcrypt = require('bcrypt');
+
 
 const createRouter = () => {
     const router = express.Router();
@@ -22,11 +24,15 @@ const createRouter = () => {
         const id = UUID();
         const uName = req.body.uName
         const pass = req.body.pass
+
+        let hash = bcrypt.hashSync(pass, 10);// hash the password
+
         const user = {
             uName,
-            pass,
+            hash,
             id
         }
+
         // no duplicate usernames allowed
         const exist = users.find(user => user.uName == req.body.uName)
         if (exist) {

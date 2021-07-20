@@ -12,7 +12,7 @@ app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
 // app.use(express.static(path.join(__dirname, 'public')));
 var things = require('./things.js');
-const comments = require('./comments.js');
+const comments = require('./src/comments.js');
 const users = require('./src/users.js');
 
 //both index.js and things.js should be in same directory
