@@ -18,6 +18,15 @@ const bcrypt = require('bcrypt');
 const createRouter = () => {
     const router = express.Router();
     const users = [];
+    const cleanUser = (u) => {
+        return {
+            uName: u.uName,
+            id: u.id
+        }
+    }
+    const findUser = (u, request) => {
+        return users.find((u) => u.uName == request.body.uName)
+    }
 
     // create new user
     router.post('/create', (req, res) => {
@@ -34,30 +43,29 @@ const createRouter = () => {
         }
 
         // no duplicate usernames allowed
-        const exist = users.find(user => user.uName == req.body.uName)
-        if (exist) {
+        if (findUser(user, req)) {
             res.send({ error: "user already exists" })
         } else {
-            users.push(user); // adds user to the end of array
-            // eventually will save user to database instead of local
-            res.send(user);
+            users.push(user);
+            res.send(cleanUser(user));
         }
     });
 
     //get all users
     router.get('/', (req, res) => {
-        res.send({ users })
+        const cleaned = users.map(cleanUser)
+        res.send({ cleaned })
+
     });
 
 
     //get one user
     router.get('/:uid', (req, res) => {
-        // res.send({ users })
         // const user = users.find((user) => user.id == req.params.uid)
         const user = users.find((user) => user.uName == req.params.uid)
 
         if (user) {
-            res.send(user);
+            res.send(cleanUser(user));
 
         } else {
             res.status(404).send({ error: '404 not found' })
@@ -66,31 +74,47 @@ const createRouter = () => {
 
     //updating existing user password
     router.post('/update', (req, res) => {
-        /*get current login info
-        */
 
-        // validate new passwords match 
+        // validate new passwords match
+        let success = false
         let new1 = req.body.new1;
         let new2 = req.body.new2;
-        if (!(new1 === new2)) {
-            res.send({ error: "new passwords do not match" });
-        } else {
-            // validate login
-            const validUser = users.find(user => user.uName == req.body.uName && user.pass == req.body.pass)
-            if (validUser) {
-                validUser.pass = new1;
-                res.send(validUser);
+        if ((new1 !== new2)) {
+            return res.send({ error: "new passwords do not match" });
+        }
+        // validate login
+        if (findUser(user, req)) {
+            const valid = bcrypt.compareSync(req.body.pass, user.hash)
+            if (valid) {
+                user.hash = bcrypt.hashSync(new1, 10);
+                success = true
             }
         }
+
+        if (success) {
+            // if (req.body.pass == req.body.new1) {
+            //     res.send({ msg: "must update password" });
+            //     return
+            // }
+            // user.hash = bcrypt.hashSync(new1, 10);
+            res.send({ msg: "password succesfully updated!" });
+        } else {
+            res.send({ msg: "invalid username or password" });
+        }
+
         // res.send(`Username: ${username} Password: ${password}`);
     });
 
     //login existing user
     router.post('/login', (req, res) => {
         // res.send(`Username: ${uName} Password: ${pass}`);
-        const validLogin = users.find(user => user.uName == req.body.uName && user.pass == req.body.pass)
-        if (validLogin) {
-            res.send({ msg: "welcome " + validLogin.uName + "!" });
+        let valid = false
+        if (findUser(user, req)) {
+            valid = bcrypt.compareSync(req.body.pass, user.hash)
+        }
+        // const validLogin = users.find(user => user.uName == req.body.uName && user.pass == req.body.pass)
+        if (valid) {
+            res.send({ msg: "welcome " + user.uName + "!" });
         } else {
             res.send({ msg: "invalid username or password" });
         }
